@@ -1,0 +1,338 @@
+{% extends "home/base.html" %}
+{% block title %}
+Our Team
+{% endblock %}
+{% block css %}
+<style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .team-section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            color: white;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .team-card:hover::before {
+            left: 100%;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+
+        .team-card:hover .team-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .team-name {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .team-bio {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Custom avatar gradients */
+        .avatar-1 {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .avatar-2 {
+            background: linear-gradient(45deg, #4ecdc4, #44bd87);
+        }
+
+        .avatar-3 {
+            background: linear-gradient(45deg, #45b7d1, #3742fa);
+        }
+
+        .avatar-4 {
+            background: linear-gradient(45deg, #96ceb4, #6c5ce7);
+        }
+
+        .avatar-5 {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+        }
+
+        @media (max-width: 768px) {
+            .team-section {
+                padding: 60px 0;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .team-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+
+    <section class="team-section">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="section-title display-3 fw-bold">Our Amazing Team</h1>
+                    <p class="section-subtitle lead">Meet the talented individuals who make our vision a reality.
+                        Together, we're building something extraordinary.</p>
+                </div>
+            </div>
+
+            <!-- Team Cards -->
+            <div class="row g-4">
+                <!-- Team Member 1 -->
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card team-card text-center">
+                        <div class="card-body">
+                            <div class="team-avatar avatar-1 mx-auto">DS</div>
+                            <h4 class="team-name">Dev Shukla</h4>
+                            <p class="team-role">Founder</p>
+                            <p class="team-bio">A Full-stack Developer and also a Cybersecurity Student fond of doing
+                                research in various sectors.</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/dev-shukla-704522326/" target="_main_"
+                                    class="social-link" title="LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://www.instagram.com/itz_devshukla/" target="_main_" class="social-link"
+                                    title="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Email">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 2 -->
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card team-card text-center">
+                        <div class="card-body">
+                            <div class="team-avatar avatar-2 mx-auto">RS</div>
+                            <h4 class="team-name">Ram Shankar Singh</h4>
+                            <p class="team-role">Head of Design</p>
+                            <p class="team-bio">Creative genius who transforms ideas into beautiful, user-friendly
+                                experiences. Believes great design tells a story.</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/ram-shankar-singh-337a28328/" target="_main_" class="social-link" title="LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://www.instagram.com/itxz_aryan_ydv_001/" target="_main_" class="social-link" title="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Email">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 3 -->
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card team-card text-center">
+                        <div class="card-body">
+                            <div class="team-avatar avatar-3 mx-auto">RY</div>
+                            <h4 class="team-name">Raj Yadav</h4>
+                            <p class="team-role">Lead Developer</p>
+                            <p class="team-bio">Full-stack wizard who brings designs to life with clean, efficient code.
+                                Open source enthusiast and mentor.</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/raj-yadav-4a1a71331/" target="_main_" class="social-link" title="LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="https://www.instagram.com/razz_ydv_2613/" target="_main_" class="social-link" title="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Email">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Member 4 -->
+                <!-- <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card team-card text-center">
+                        <div class="card-body">
+                            <div class="team-avatar avatar-4 mx-auto">AS</div>
+                            <h4 class="team-name">Anshika Saraswat</h4>
+                            <p class="team-role">Cyber Security Lead</p>
+                            <p class="team-bio">The Person Behind the Security of your data.The Great Man.</p>
+                            <div class="social-links">
+                                <a href="#" class="social-link" title="LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Email">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- Team Member 5 -->
+                <!-- <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="card team-card text-center">
+                        <div class="card-body">
+                            <div class="team-avatar avatar-5 mx-auto">AT</div>
+                            <h4 class="team-name">Ayush Kumar Tiwary</h4>
+                            <p class="team-role">Data Scientist</p>
+                            <p class="team-bio">Numbers ninja who uncovers insights that drive smart decisions. Machine
+                                learning expert with a passion for AI.</p>
+                            <div class="social-links">
+                                <a href="#" class="social-link" title="LinkedIn">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Instagram">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Email">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Add smooth scroll animation for cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initialize animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.team-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+                observer.observe(card);
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends "home/base.html" %}
+{% block css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .registration-container {
+        margin-top: 120px;
+        margin-bottom: 50px;
+    }
+
+    .registration-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 40px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-label {
+        color: #34495e;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .input-group-text {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .form-control.with-icon {
+        border-radius: 0 10px 10px 0;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 50px;
+        padding: 15px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        width: 100%;
+        margin-top: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    }
+
+    .form-floating {
+        margin-bottom: 20px;
+    }
+
+    .form-floating>.form-control:focus~label,
+    .form-floating>.form-control:not(:placeholder-shown)~label {
+        color: #667eea;
+    }
+
+    .form-floating>.form-select:focus~label,
+    .form-floating>.form-select:not([value=""])~label {
+        color: #667eea;
+    }
+
+    .invalid-feedback {
+        display: block;
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .registration-container {
+            margin-top: 100px;
+            padding: 0 15px;
+        }
+
+        .registration-card {
+            padding: 30px 20px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+{% block title %}
+Edit Abulance Details - Call4Care
+{% endblock %}
+
+{% block body %}
+<div class="container registration-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="registration-card">
+                <h2 class="card-title">
+                    <i class="fas fa-user-edit" style="color: #667eea; margin-right: 10px;"></i>
+                    Edit Ambulance Details
+                </h2>
+
+                <form id="ambulanceRegistrationForm" method="POST" novalidate>
+                    {% csrf_token %}
+                    <!-- Ambulance ID -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" name="AmbulanceId" id="ambulanceId"
+                            placeholder="Ambulance ID" required value="{{ Ambu.Ambulance_ID }}">
+                        <label for="ambulanceId">
+                            <i class="fas fa-id-card me-2"></i>Ambulance ID
+                        </label>
+                        
+                    </div>
+
+                    <!-- Driver Name -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" name="drivername" id="driverName"
+                            placeholder="Driver Name" required value="{{ Ambu.Driver_Name }}">
+                        <label for="driverName">
+                            <i class="fas fa-user me-2"></i>Driver Name
+                        </label>
+                        
+                    </div>
+
+                    <!-- Driver Phone Number -->
+                    <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" name="driverphone" id="driverPhone" placeholder="Driver Phone Number"  required value = "{{ Ambu.Driver_Phone_Number }}">
+                            <label for="driverPhone">
+                                <i class="fas fa-phone me-2"></i>Driver Phone Number
+                            </label>
+                            
+                        </div>
+
+                    <!-- Vehicle Number -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" name="vehicleNumber" id="vehicleNumber"
+                            placeholder="Vehicle Number" required value="{{ Ambu.Vehicle_Number }}">
+                        <label for="vehicleNumber">
+                            <i class="fas fa-car me-2"></i>Vehicle Number
+                        </label>
+                    </div>
+
+                    <!-- Ambulance Type -->
+                    <div class="form-floating mb-3">
+                        <select class="form-select" name="ambulanceType" id="ambulanceType" required>
+                            <option value="">Choose ambulance type</option>
+                            <option value="basic" {% if Ambu.Ambulance_Type == "basic" %}selected{% endif %}>Basic Life
+                                Support</option>
+                            <option value="advanced" {% if Ambu.Ambulance_Type == "advanced" %}selected{% endif %}>
+                                Advanced Life Support</option>
+                            <option value="icu" {% if Ambu.Ambulance_Type == "icu" %}selected{% endif %}>ICU Ambulance
+                            </option>
+                            <option value="oxygen" {% if Ambu.Ambulance_Type == "oxygen" %}selected{% endif %}>Oxygen
+                                Ambulance</option>
+                        </select>
+                        <label for="ambulanceType">
+                            <i class="fas fa-truck-medical me-2"></i>Ambulance Type
+                        </label>
+                        
+                    </div>
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Edit Ambulance Details
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+{% endblock %}

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call4Care - Emergency Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #dc3545;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .emergency-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .emergency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+
+        .location-indicator {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 10px 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
+        .emergency-btn {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .emergency-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+            background: linear-gradient(45deg, #c82333, #dc3545);
+        }
+
+        .voice-recorder {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .voice-recorder:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+        }
+
+        .voice-recorder.recording {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+            animation: recordPulse 1s infinite;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .media-upload-zone {
+            border: 3px dashed #007bff;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(0, 123, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .media-upload-zone:hover {
+            border-color: #0056b3;
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .media-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .emergency-type-card {
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .emergency-type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .emergency-type-card.selected {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .status-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .recording-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(220, 53, 69, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .location-map {
+            height: 200px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Header -->
+    <nav class="navbar dashboard-header sticky-top">
+        <div class="container-fluid">
+            <div class="navbar-brand d-flex align-items-center">
+                <i class="fas fa-ambulance text-danger fs-2 me-3"></i>
+                <div>
+                    <h2 class="mb-0 text-danger fw-bold">Call4Care</h2>
+                    <small class="text-muted">Emergency Response Dashboard</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="location-indicator me-3">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    <span id="locationStatus">Getting Location...</span>
+                </div>
+                <button class="btn btn-outline-danger" onclick="refreshLocation()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="btn btn-secondary mx-2"><a href="/" style="text-decoration: none;color: white;">Back</a></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Status Badge -->
+    <div id="statusBadge" class="status-badge bg-warning text-dark" style="display: none;">
+        <i class="fas fa-clock me-2"></i>
+        <span id="statusText">Preparing Emergency Request...</span>
+    </div>
+
+    <!-- Recording Indicator -->
+    <div id="recordingIndicator" class="recording-indicator" style="display: none;">
+        <i class="fas fa-microphone me-2"></i>
+        Recording Voice Message... <span id="recordingTime">00:00</span>
+    </div>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <!-- Emergency Type Selection -->
+            <div class="col-lg-6">
+                <div class="emergency-card p-4">
+                    <h4 class="text-center mb-4 text-danger fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Select Emergency Type
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="emergency-type-card" onclick="selectEmergencyType('medical', this)">
+                                <i class="fas fa-heartbeat text-danger fs-1 mb-3"></i>
+                                <h6>Medical Emergency</h6>
+                                <small class="text-muted">Health related emergency</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="emergency-type-card" onclick="selectEmergencyType('accident', this)">
+                                <i class="fas fa-car-crash text-warning fs-1 mb-3"></i>
+                                <h6>Accident</h6>
+                                <small class="text-muted">Road or workplace accident</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="emergency-type-card" onclick="selectEmergencyType('fire', this)">
+                                <i class="fas fa-fire text-danger fs-1 mb-3"></i>
+                                <h6>Fire Emergency</h6>
+                                <small class="text-muted">Fire or explosion</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="emergency-type-card" onclick="selectEmergencyType('crime', this)">
+                                <i class="fas fa-shield-alt text-primary fs-1 mb-3"></i>
+                                <h6>Crime/Security</h6>
+                                <small class="text-muted">Criminal activity or threat</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Input & Media Upload -->
+            <div class="col-lg-6">
+                <div class="emergency-card p-4">
+                    <h4 class="text-center mb-4 text-primary fw-bold">
+                        <i class="fas fa-microphone me-2"></i>
+                        Voice Input & Media Proof
+                    </h4>
+                    
+                    <!-- Voice Recording Section -->
+                    <div class="text-center mb-4">
+                        <button id="voiceBtn" class="voice-recorder" onclick="toggleRecording()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <p class="mt-3 mb-0">
+                            <strong>Tap to record voice message</strong><br>
+                            <small class="text-muted">Describe the emergency situation</small>
+                        </p>
+                        <div id="audioPlayback" style="display: none;" class="mt-3">
+                            <audio controls class="w-100"></audio>
+                            <button class="btn btn-sm btn-outline-danger mt-2" onclick="deleteAudio()">
+                                <i class="fas fa-trash me-1"></i>Delete Recording
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Media Upload Section -->
+                    <div class="media-upload-zone" onclick="document.getElementById('mediaInput').click()">
+                        <i class="fas fa-camera fs-1 text-primary mb-3"></i>
+                        <h5>Upload Photo/Video Proof</h5>
+                        <p class="text-muted mb-0">Required: Click to upload images or videos as evidence</p>
+                        <small class="text-danger">*Mandatory for emergency request</small>
+                    </div>
+                    <input type="file" id="mediaInput" multiple accept="image/*,video/*" style="display: none;" onchange="handleMediaUpload(event)">
+                    
+                    <!-- Media Preview -->
+                    <div id="mediaPreview" class="row g-2 mt-3" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Location & Description -->
+            <div class="col-lg-8">
+                <div class="emergency-card p-4">
+                    <h4 class="text-success fw-bold mb-4">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Live Location & Additional Details
+                    </h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="location-map mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marked-alt fs-1 mb-2"></i>
+                                    <div id="locationDetails">
+                                        <div>📍 Live Location Active</div>
+                                        <small>Updating every 10 seconds</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <small class="text-muted">
+                                    Coordinates: <span id="coordinates">Getting location...</span><br>
+                                    Last Updated: <span id="lastUpdated">--</span><br>
+                                    Accuracy: <span id="accuracy">--</span>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Additional Description (Optional)</label>
+                            <textarea id="description" class="form-control" rows="8" placeholder="Provide any additional details about the emergency situation..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="col-lg-4">
+                <div class="emergency-card p-4 text-center">
+                    <h4 class="text-danger fw-bold mb-4">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Submit Emergency Request
+                    </h4>
+                    
+                    <div class="mb-4">
+                        <div class="border rounded p-3 mb-3">
+                            <h6 class="text-muted mb-2">Request Summary:</h6>
+                            <div id="requestSummary">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Emergency Type:</span>
+                                    <span id="selectedType" class="fw-bold text-danger">Not Selected</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Voice Recording:</span>
+                                    <span id="voiceStatus" class="fw-bold text-warning">Not Recorded</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Media Proof:</span>
+                                    <span id="mediaStatus" class="fw-bold text-warning">Not Uploaded</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Location:</span>
+                                    <span id="locationSummary" class="fw-bold text-success">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="submitBtn" class="emergency-btn w-100 mb-3" onclick="submitEmergencyRequest()" disabled>
+                        <i class="fas fa-ambulance me-2"></i>
+                        SEND EMERGENCY REQUEST
+                    </button>
+                    
+                    <small class="text-muted">
+                        Emergency services will be notified immediately upon submission
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    <h3 class="text-success mt-3">Emergency Request Submitted!</h3>
+                    <p class="text-muted">Your emergency request has been successfully submitted. Emergency services are being notified.</p>
+                    <div class="alert alert-info">
+                        <strong>Request ID:</strong> <span id="requestId"></span><br>
+                        <strong>Estimated Response Time:</strong> 5-10 minutes
+                    </div>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- <script>
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordingTimer = null;
+        let recordingStartTime = 0;
+        let selectedEmergencyType = null;
+        let uploadedMedia = [];
+        let currentLocation = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            getCurrentLocation();
+            setInterval(getCurrentLocation, 10000); // Update location every 10 seconds
+        });
+
+        // Get current location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date()
+                        };
+                        
+                        document.getElementById('locationStatus').innerHTML = 'Location Active';
+                        document.getElementById('coordinates').innerHTML = 
+                            `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+                        document.getElementById('lastUpdated').innerHTML = 
+                            currentLocation.timestamp.toLocaleTimeString();
+                        document.getElementById('accuracy').innerHTML = 
+                            `±${Math.round(currentLocation.accuracy)}m`;
+                    },
+                    function(error) {
+                        document.getElementById('locationStatus').innerHTML = 'Location Error';
+                        document.getElementById('coordinates').innerHTML = 'Unable to get location';
+                        console.error('Location error:', error);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                );
+            }
+        }
+
+        function refreshLocation() {
+            getCurrentLocation();
+            showStatus('Location refreshed', 'success');
+        }
+
+        // Emergency type selection
+        function selectEmergencyType(type, element) {
+            document.querySelectorAll('.emergency-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedEmergencyType = type;
+            
+            const typeNames = {
+                'medical': 'Medical Emergency',
+                'accident': 'Accident',
+                'fire': 'Fire Emergency',
+                'crime': 'Crime/Security'
+            };
+            
+            document.getElementById('selectedType').innerHTML = typeNames[type];
+            document.getElementById('selectedType').className = 'fw-bold text-success';
+            
+            checkSubmitStatus();
+        }
+
+        // Voice recording functions
+        async function toggleRecording() {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                recordedChunks = [];
+                
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = function() {
+                    const blob = new Blob(recordedChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(blob);
+                    
+                    const audioPlayback = document.getElementById('audioPlayback');
+                    const audio = audioPlayback.querySelector('audio');
+                    audio.src = audioUrl;
+                    audioPlayback.style.display = 'block';
+                    
+                    document.getElementById('voiceStatus').innerHTML = 'Recorded';
+                    document.getElementById('voiceStatus').className = 'fw-bold text-success';
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                    checkSubmitStatus();
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                recordingStartTime = Date.now();
+                
+                document.getElementById('voiceBtn').classList.add('recording');
+                document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-stop"></i>';
+                document.getElementById('recordingIndicator').style.display = 'block';
+                
+                recordingTimer = setInterval(updateRecordingTime, 1000);
+                
+            } catch (error) {
+                alert('Unable to access microphone. Please allow microphone access.');
+                console.error('Recording error:', error);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                clearInterval(recordingTimer);
+                
+                document.getElementById('voiceBtn').classList.remove('recording');
+                document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i>';
+                document.getElementById('recordingIndicator').style.display = 'none';
+            }
+        }
+
+        function updateRecordingTime() {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('recordingTime').innerHTML = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function deleteAudio() {
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('voiceStatus').innerHTML = 'Not Recorded';
+            document.getElementById('voiceStatus').className = 'fw-bold text-warning';
+            checkSubmitStatus();
+        }
+
+        // Media upload functions
+        function handleMediaUpload(event) {
+            const files = Array.from(event.target.files);
+            const preview = document.getElementById('mediaPreview');
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+                    uploadedMedia.push(file);
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-4';
+                        
+                        const mediaElement = file.type.startsWith('image/') 
+                            ? `<img src="${e.target.result}" class="media-preview w-100" alt="Uploaded media">`
+                            : `<video src="${e.target.result}" class="media-preview w-100" controls></video>`;
+                        
+                        col.innerHTML = `
+                            <div class="position-relative">
+                                ${mediaElement}
+                                <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" 
+                                        onclick="removeMedia(this, ${uploadedMedia.length - 1})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                        
+                        preview.appendChild(col);
+                        preview.style.display = 'flex';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            updateMediaStatus();
+        }
+
+        function removeMedia(button, index) {
+            uploadedMedia.splice(index, 1);
+            button.closest('.col-4').remove();
+            
+            if (uploadedMedia.length === 0) {
+                document.getElementById('mediaPreview').style.display = 'none';
+            }
+            
+            updateMediaStatus();
+        }
+
+        function updateMediaStatus() {
+            const mediaStatus = document.getElementById('mediaStatus');
+            if (uploadedMedia.length > 0) {
+                mediaStatus.innerHTML = `${uploadedMedia.length} file(s)`;
+                mediaStatus.className = 'fw-bold text-success';
+            } else {
+                mediaStatus.innerHTML = 'Not Uploaded';
+                mediaStatus.className = 'fw-bold text-warning';
+            }
+            checkSubmitStatus();
+        }
+
+        // Check if all requirements are met
+        function checkSubmitStatus() {
+            const submitBtn = document.getElementById('submitBtn');
+            const hasType = selectedEmergencyType !== null;
+            const hasMedia = uploadedMedia.length > 0;
+            const hasLocation = currentLocation !== null;
+            
+            if (hasType && hasMedia && hasLocation) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-secondary');
+                submitBtn.classList.add('emergency-btn');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('btn-secondary');
+                submitBtn.classList.remove('emergency-btn');
+            }
+        }
+
+        // Submit emergency request
+        function submitEmergencyRequest() {
+            if (!selectedEmergencyType || uploadedMedia.length === 0) {
+                alert('Please select emergency type and upload media proof before submitting.');
+                return;
+            }
+            
+            showStatus('Submitting emergency request...', 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                const requestId = 'EMG' + Date.now().toString().slice(-6);
+                document.getElementById('requestId').innerHTML = requestId;
+                
+                const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+                
+                showStatus('Emergency request submitted successfully!', 'success');
+                
+                // Reset form after successful submission
+                setTimeout(() => {
+                    resetForm();
+                }, 3000);
+                
+            }, 2000);
+        }
+
+        // Utility functions
+        function showStatus(message, type) {
+            const badge = document.getElementById('statusBadge');
+            const text = document.getElementById('statusText');
+            
+            badge.className = `status-badge bg-${type === 'success' ? 'success' : type === 'error' ? 'danger' : type === 'info' ? 'info' : 'warning'} text-${type === 'warning' ? 'dark' : 'white'}`;
+            text.innerHTML = message;
+            badge.style.display = 'block';
+            
+            setTimeout(() => {
+                badge.style.display = 'none';
+            }, 5000);
+        }
+
+        function resetForm() {
+            selectedEmergencyType = null;
+            uploadedMedia = [];
+            document.querySelectorAll('.emergency-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('mediaPreview').style.display = 'none';
+            document.getElementById('mediaPreview').innerHTML = '';
+            document.getElementById('audioPlayback').style.display = 'none';
+            document.getElementById('description').value = '';
+            
+            document.getElementById('selectedType').innerHTML = 'Not Selected';
+            document.getElementById('selectedType').className = 'fw-bold text-danger';
+            document.getElementById('voiceStatus').innerHTML = 'Not Recorded';
+            document.getElementById('voiceStatus').className = 'fw-bold text-warning';
+            document.getElementById('mediaStatus').innerHTML = 'Not Uploaded';
+            document.getElementById('mediaStatus').className = 'fw-bold text-warning';
+            
+            checkSubmitStatus();
+        }
+
+        // Initialize location tracking
+        getCurrentLocation();
+    </script> -->
+</body>
+</html>

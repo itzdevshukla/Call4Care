@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call4Care - Emergency Response Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --navbar-height: 60px;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            z-index: 1030;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .heart-pulse {
+            color: #ff6b6b;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .user-dropdown {
+            position: relative;
+        }
+        
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .user-dropdown-toggle:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 200px;
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .user-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .user-dropdown-menu .dropdown-item {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            color: #495057;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 8px;
+        }
+        
+        .user-dropdown-menu .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+        
+        .user-dropdown-menu .dropdown-item.logout-btn:hover {
+            background: #ffeaea;
+            color: #dc3545;
+        }
+        
+        .navbar-text {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+        }
+        
+        .dark-mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .dark-mode-toggle.active::after {
+            transform: translateX(30px);
+            background: #212529;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--navbar-height));
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            overflow-y: auto;
+            z-index: 1020;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--navbar-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--navbar-height));
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+        
+        .stat-card p {
+            color: #6c757d;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+        
+        .stat-card .stat-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .emergency-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .emergency-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .emergency-type {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .emergency-time {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            border-radius: 8px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        /* Dark mode styles */
+        [data-theme="dark"] {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .sidebar {
+            background: #1e1e1e;
+            border-right-color: #333;
+        }
+        
+        [data-theme="dark"] .sidebar-nav .nav-link {
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .sidebar-nav .nav-link:hover,
+        [data-theme="dark"] .sidebar-nav .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #8fa7ff;
+        }
+        
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .section-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        
+        [data-theme="dark"] .section-title {
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .emergency-item {
+            background: #3a3a3a;
+        }
+        
+        [data-theme="dark"] .emergency-item:hover {
+            background: #4a4a4a;
+        }
+        
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background: #3a3a3a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            background: #3a3a3a;
+            border-color: #667eea;
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .user-dropdown-menu {
+            background: #2d2d2d;
+            border: 1px solid #444;
+        }
+        
+        [data-theme="dark"] .user-dropdown-menu .dropdown-item {
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .user-dropdown-menu .dropdown-item:hover {
+            background: #3a3a3a;
+            color: #8fa7ff;
+        }
+        
+        [data-theme="dark"] .user-dropdown-menu .dropdown-item.logout-btn:hover {
+            background: #4a2c2c;
+            color: #ff6b6b;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .stat-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-heartbeat heart-pulse"></i>
+                Call4Care
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="dark-mode-toggle me-3" id="darkModeToggle"></button>
+                <div class="user-dropdown">
+                    <button class="user-dropdown-toggle" id="userDropdownToggle">
+                        <i class="fas fa-user-circle me-2"></i>Welcome, {{user.username}}
+                        <i class="fas fa-chevron-down ms-2"></i>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i>My Profile
+                        </a>
+                        <a href="{% url 'logout' %}" class="dropdown-item logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#report">
+                    <i class="fas fa-bullhorn"></i> Report Emergency
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#history">
+                    <i class="fas fa-history"></i> Emergency History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#help-centers">
+                    <i class="fas fa-map-marker-alt"></i> Nearby Help Centers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#profile">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#feedback">
+                    <i class="fas fa-comments"></i> Feedback
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-exclamation-triangle stat-icon"></i>
+                    <h3>12</h3>
+                    <p>Emergency Requests</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-clock stat-icon"></i>
+                    <h3>3.2 min</h3>
+                    <p>Avg Response Time</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <i class="fas fa-map-marker-alt stat-icon"></i>
+                    <h3>Downtown</h3>
+                    <p>Last Location Used</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <i class="fas fa-car-crash stat-icon"></i>
+                    <h3>8</h3>
+                    <p>Accidents Reported by User</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <i class="fas fa-check-circle stat-icon"></i>
+                    <h3>95%</h3>
+                    <p>Success Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">Report a New Emergency</h2>
+            <form id="emergencyForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Type of Emergency</label>
+                        <select class="form-select" required>
+                            <option value="">Select emergency type</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="fire">Fire Emergency</option>
+                            <option value="police">Police Emergency</option>
+                            <option value="natural">Natural Disaster</option>
+                            <option value="accident">Traffic Accident</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-control" placeholder="Enter your location" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Additional Details</label>
+                    <textarea class="form-control" rows="4" placeholder="Describe the emergency situation..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Emergency Report
+                </button>
+            </form>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">Recent Emergency Reports</h2>
+            <div class="emergency-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="emergency-type">Medical Emergency</div>
+                        <div class="emergency-time">
+                            <i class="fas fa-clock me-1"></i>2 hours ago - Downtown Medical Center
+                        </div>
+                        <div class="text-muted mt-2">Chest pain, ambulance dispatched</div>
+                    </div>
+                    <span class="badge bg-success">Resolved</span>
+                </div>
+            </div>
+            <div class="emergency-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="emergency-type">Fire Emergency</div>
+                        <div class="emergency-time">
+                            <i class="fas fa-clock me-1"></i>1 day ago - Residential Area Block 5
+                        </div>
+                        <div class="text-muted mt-2">Kitchen fire, fire department responded</div>
+                    </div>
+                    <span class="badge bg-success">Resolved</span>
+                </div>
+            </div>
+            <div class="emergency-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="emergency-type">Traffic Accident</div>
+                        <div class="emergency-time">
+                            <i class="fas fa-clock me-1"></i>3 days ago - Highway 101 Junction
+                        </div>
+                        <div class="text-muted mt-2">Minor collision, no injuries reported</div>
+                    </div>
+                    <span class="badge bg-success">Resolved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const userDropdownToggle = document.getElementById('userDropdownToggle');
+            const userDropdownMenu = document.getElementById('userDropdownMenu');
+            const body = document.body;
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                if (savedTheme === 'dark') {
+                    darkModeToggle.classList.add('active');
+                }
+            }
+            
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', function() {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                if (newTheme === 'dark') {
+                    darkModeToggle.classList.add('active');
+                } else {
+                    darkModeToggle.classList.remove('active');
+                }
+            });
+            
+            // User dropdown toggle
+            userDropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdownMenu.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userDropdownToggle.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+                    userDropdownMenu.classList.remove('show');
+                }
+            });
+            
+            
+                
+           
+            
+            // Handle sidebar navigation
+            const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

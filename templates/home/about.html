@@ -1,0 +1,481 @@
+{% extends "home/base.html" %}
+{% block title %}
+About US - Call4Care
+{% endblock %}
+
+
+{% block css %}
+<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0 3rem 0;
+            margin-bottom: 4rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            color: var(--dark-color);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #6c757d;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            text-align: center;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .step-content h5 {
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: #6c757d;
+            margin: 0;
+        }
+
+        /* Role Cards */
+        .role-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            height: 100%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .role-card.hospitals {
+            border-left-color: #28a745;
+        }
+
+        .role-card.drivers {
+            border-left-color: #007bff;
+        }
+
+        .role-card.admins {
+            border-left-color: #dc3545;
+        }
+
+        .role-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .role-card.hospitals .role-icon {
+            background: #28a745;
+        }
+
+        .role-card.drivers .role-icon {
+            background: #007bff;
+        }
+
+        .role-card.admins .role-icon {
+            background: #dc3545;
+        }
+
+        .role-title {
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .role-description {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* Technology Section */
+        .tech-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+        }
+
+        .tech-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tech-features li {
+            padding: 0.8rem 0;
+            color: #6c757d;
+            font-size: 1rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .tech-features li::before {
+            content: '🚀';
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+
+        /* Mission Statement */
+        .mission-statement {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .mission-statement h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .mission-statement p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .workflow-step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .how-it-works, .tech-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .d-flex.flex-column.flex-lg-row {
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-section {
+                padding: 3rem 0 2rem 0;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 2rem 0;
+            }
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="hero-title">About Call4Care</h1>
+            <p class="hero-subtitle">
+                Revolutionizing emergency medical response through innovative technology, seamless coordination, 
+                and real-time tracking to save lives when every second counts.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Mission Introduction -->
+        <section class="content-section">
+            <p class="intro-text fade-in-up">
+                Call4Care is dedicated to transforming emergency healthcare by dramatically reducing response times 
+                and improving coordination between patients, ambulance services, and hospitals. Our platform leverages 
+                cutting-edge technology to create a seamless emergency response ecosystem that ensures help arrives 
+                faster and more efficiently than ever before.
+            </p>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="content-section">
+            <h2 class="section-title fade-in-up">How Call4Care Works</h2>
+            
+            <div class="how-it-works fade-in-up stagger-1">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h5>Emergency Request</h5>
+                        <p>Patient or bystander quickly submits an emergency request through our platform with location details and medical information.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h5>Ambulance Assignment</h5>
+                        <p>Our intelligent system automatically assigns the nearest available ambulance based on location, traffic conditions, and medical requirements.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h5>Hospital Coordination</h5>
+                        <p>Nearby hospitals are notified simultaneously, allowing them to prepare for the incoming patient and confirm availability of beds and medical staff.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h5>Live Tracking & Delivery</h5>
+                        <p>Real-time GPS tracking provides continuous updates on ambulance location, estimated arrival times, and patient status until safe hospital delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roles Section -->
+        <section class="content-section">
+            <h2 class="section-title fade-in-up">Key Stakeholders</h2>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="role-card hospitals fade-in-up stagger-1">
+                        <div class="role-icon">
+                            <i class="bi bi-hospital"></i>
+                        </div>
+                        <h4 class="role-title">Hospitals</h4>
+                        <p class="role-description">
+                            Receive real-time emergency notifications, manage bed availability, coordinate with ambulance services, 
+                            and prepare medical teams for incoming patients to ensure seamless admission and treatment.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="role-card drivers fade-in-up stagger-2">
+                        <div class="role-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <h4 class="role-title">Ambulance Drivers</h4>
+                        <p class="role-description">
+                            Access optimized routes, receive patient information, update status in real-time, and maintain 
+                            communication with hospitals and dispatch centers throughout the emergency response process.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="role-card admins fade-in-up stagger-3">
+                        <div class="role-icon">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <h4 class="role-title">System Administrators</h4>
+                        <p class="role-description">
+                            Monitor system performance, manage user accounts, oversee emergency operations, generate reports, 
+                            and ensure the platform operates smoothly 24/7 for critical emergency situations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technology Section -->
+        <section class="content-section">
+            <div class="tech-section fade-in-up">
+                <h2 class="section-title">Technology-Driven Accountability</h2>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p class="intro-text text-start">
+                            Our platform is built on advanced technology that ensures transparency, accountability, 
+                            and continuous improvement in emergency medical services.
+                        </p>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="tech-features">
+                            <li>Real-time GPS tracking and route optimization</li>
+                            <li>Automated response time monitoring</li>
+                            <li>Comprehensive activity logging and audit trails</li>
+                            <li>Performance analytics and reporting</li>
+                            <li>Multi-platform accessibility (web, mobile, desktop)</li>
+                            <li>Secure data encryption and privacy protection</li>
+                            <li>24/7 system monitoring and maintenance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Statement -->
+        <section class="mission-statement fade-in-up">
+            <h3>Our Mission</h3>
+            <p>
+                To save lives by revolutionizing emergency medical care through innovative technology, 
+                seamless coordination, and data-driven insights. We believe that every second counts in 
+                an emergency, and our platform is designed to make those seconds count towards saving lives 
+                and improving outcomes for patients across the healthcare system.
+            </p>
+        </section>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container text-center">
+            <h2 class="text-white mb-3">Join the Emergency Care Revolution</h2>
+            <p class="text-white mb-4 opacity-75">Be part of the solution that's making emergency healthcare faster, smarter, and more effective.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 py-2">Get Started Today</a>
+                <a href="{% url 'services' %}" class="btn btn-outline-light btn-lg px-4 py-2">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initially hide animated elements
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s ease-out';
+            observer.observe(el);
+        });
+
+        console.log('Call4Care About Us page loaded successfully!');
+    </script>
+{% endblock %}
