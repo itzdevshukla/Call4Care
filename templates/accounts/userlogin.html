@@ -358,19 +358,10 @@ Login - Call4Care
             <p class="login-subtitle">Please sign in to your account</p>
         </div>
 
-        <!-- Alert Messages (initially hidden) -->
-        <div class="alert alert-danger d-none" id="errorAlert" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span id="errorMessage">Invalid email or password. Please try again.</span>
-        </div>
 
-        <div class="alert alert-success d-none" id="successAlert" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <span id="successMessage">Login successful! Redirecting...</span>
-        </div>
 
         <!-- Login Form -->
-        <form id="loginForm" method="POST">
+        <form id="loginForm" method="POST" >
             {% csrf_token %}
             <!-- Email Field -->
             <div class="form-floating">
