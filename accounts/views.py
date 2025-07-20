@@ -11,15 +11,15 @@ def userlogin(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
+        if Student.objects.filter(username = username).exists():
 
-        user = auth.authenticate(request,username = username , password = password)
-
-        if user is not None:
-            auth.login(request,user)
-            if user.is_superuser:
-                return redirect("administration")
-            else:
-                return redirect("dashboard")
+            user = auth.authenticate(request,username = username , password = password)
+            if user is not None:
+                auth.login(request,user)
+                if user.is_superuser:
+                    return redirect("administration")
+                else:
+                    return redirect("dashboard")
         print("Invalid Username or Password")
 
     return render(request,"accounts/userlogin.html")
@@ -36,24 +36,15 @@ def register(request):
         user_phone_number = request.POST.get("phone_number")
         user_username = request.POST.get("username")
 
-        new_user = User(
-            first_name = user_first_name,
-            last_name = user_last_name,
-            email = user_email,
-            username = user_username
-            
-        )
-        new_user.set_password(user_password)
-        new_user.save()
-
         new_user = Student(
             first_name = user_first_name,
             last_name = user_last_name,
             email = user_email,
-            phone_number = user_phone_number,
-            password = user_password
-            )
-        new_user.save() 
+            username = user_username,
+            phone_number = user_phone_number,   
+        )
+        new_user.set_password(user_password)
+        new_user.save()
         return redirect("login")
 
     return render(request,"accounts/register.html")
