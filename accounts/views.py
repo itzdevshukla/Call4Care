@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from  home.models import Student,Ambulance
 
 from django.contrib.auth.models import User
-from django.contrib import auth
+from django.contrib import auth,messages
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -20,7 +20,7 @@ def userlogin(request):
                     return redirect("administration")
                 else:
                     return redirect("dashboard")
-        print("Invalid Username or Password")
+        messages.error(request,"Invalid Username or Password")
 
     return render(request,"accounts/userlogin.html")
 
@@ -90,6 +90,7 @@ def hospital(request):
 
 # From here only the read operation is performed
 # 1. For User Details
+@login_required
 def read(request):
     Users = Student.objects.all().order_by('-id')
 
@@ -100,6 +101,7 @@ def read(request):
     return render(request,"Details_every/in.html",parameters)
 
 # 2. For Ambulance Details
+@login_required
 def ambulance_read(request):
      
      Ambulances = Ambulance.objects.all()
@@ -113,7 +115,6 @@ def ambulance_read(request):
 
 
 # =========Delete User/Ambulance Details=================
-
 def delete_user(request,user_id):
     User = Student.objects.get(id=user_id)
     User.delete()

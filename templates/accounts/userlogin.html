@@ -323,7 +323,7 @@ Login - Call4Care
         margin-right: 0.5rem;
     }
 
-    
+
     /* Shake animation */
     @keyframes shake {
 
@@ -352,88 +352,98 @@ Login - Call4Care
 {% block body %}
 <div class="login-container">
     <div class="login-card">
-        <!-- Login Header -->
-        <div class="login-header">
-            <h1 class="login-title">Welcome Back</h1>
-            <p class="login-subtitle">Please sign in to your account</p>
-        </div>
-
-
-
-        <!-- Login Form -->
-        <form id="loginForm" method="POST" >
-            {% csrf_token %}
-            <!-- Email Field -->
-            <div class="form-floating">
-                <input type="text" class="form-control" id="email" placeholder="name@example.com" required
-                    name="username">
-                <label for="email"><i class="bi bi-envelope me-2"></i>Username</label>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == "error" %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% else %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {% endif %}
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
+            {% endif %}
 
-            <!-- Password Field -->
-            <div class="form-floating position-relative">
-                <input type="password" class="form-control" id="password" placeholder="Password" required
-                    name="password">
-                <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
-                <button type="button" class="password-toggle" id="togglePassword">
-                    <i class="bi bi-eye" id="toggleIcon"></i>
-                </button>
+            <!-- Login Header -->
+            <div class="login-header">
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Please sign in to your account</p>
             </div>
-
-            <!-- Remember Me & Forgot Password -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="rememberMe">
-                    <label class="form-check-label" for="rememberMe">
-                        Remember me
-                    </label>
+            <!-- Login Form -->
+            <form id="loginForm" method="POST">
+                {% csrf_token %}
+                <!-- Email Field -->
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="email" placeholder="name@example.com" required
+                        name="username">
+                    <label for="email"><i class="bi bi-envelope me-2"></i>Username</label>
                 </div>
-                <a href="#" class="forgot-password">Forgot password?</a>
+
+                <!-- Password Field -->
+                <div class="form-floating position-relative">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required
+                        name="password">
+                    <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn btn-login" id="loginBtn">
+                    <span id="loginText">Sign In</span>
+                    <span class="spinner-border spinner-border-sm d-none" id="loginSpinner" role="status"></span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>or continue with</span>
             </div>
 
-            <!-- Login Button -->
-            <button type="submit" class="btn btn-login" id="loginBtn">
-                <span id="loginText">Sign In</span>
-                <span class="spinner-border spinner-border-sm d-none" id="loginSpinner" role="status"></span>
-            </button>
-        </form>
+            <!-- Social Login -->
+            <div class="social-login">
+                <a href="#" class="social-btn" title="Sign in with Google">
+                    <i class="bi bi-google"></i>
+                </a>
+                <a href="#" class="social-btn" title="Sign in with Facebook">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="#" class="social-btn" title="Sign in with Twitter">
+                    <i class="bi bi-twitter"></i>
+                </a>
+            </div>
 
-        <!-- Divider -->
-        <div class="divider">
-            <span>or continue with</span>
-        </div>
-
-        <!-- Social Login -->
-        <div class="social-login">
-            <a href="#" class="social-btn" title="Sign in with Google">
-                <i class="bi bi-google"></i>
-            </a>
-            <a href="#" class="social-btn" title="Sign in with Facebook">
-                <i class="bi bi-facebook"></i>
-            </a>
-            <a href="#" class="social-btn" title="Sign in with Twitter">
-                <i class="bi bi-twitter"></i>
-            </a>
-        </div>
-
-        <!-- Admin Login Button -->
-        <!-- <div class="text-center mb-3">
+            <!-- Admin Login Button -->
+            <!-- <div class="text-center mb-3">
                 <button type="button" class="btn btn-outline-light btn-sm" id="adminLoginBtn">
                     <i class="bi bi-shield-lock me-2"></i>Admin Login
                 </button>
             </div> -->
 
-        <!-- Sign Up Link -->
-        <div class="signup-link">
-            Don't have an account? <a href="{% url 'register' %}">Sign up here</a>
+            <!-- Sign Up Link -->
+            <div class="signup-link">
+                Don't have an account? <a href="{% url 'register' %}">Sign up here</a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-<!-- <script>
+    <!-- <script>
         // Password toggle functionality
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -585,4 +595,4 @@ Login - Call4Care
             });
         });
     </script> -->
-{% endblock %}
+    {% endblock %}
