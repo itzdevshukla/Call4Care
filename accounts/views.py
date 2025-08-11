@@ -11,7 +11,7 @@ def userlogin(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        if Student.objects.filter(username = username).exists():
+        if User.objects.filter(username = username).exists():
 
             user = auth.authenticate(request,username = username , password = password)
             if user is not None:

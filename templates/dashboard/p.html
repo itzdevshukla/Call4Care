@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call4Care - Gemini AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #333333;
+            --secondary: #2a9d8f;
+            --blue: #007bff;
+            --light-gray: #f8f9fa;
+            --border-gray: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-gray);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: none;
+        }
+
+        .header .subtitle {
+            color: #666666;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-gray);
+            border-radius: 15px;
+            padding: 1rem;
+            font-size: 1rem;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25), 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+            background: #0056b3;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .response-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-gray);
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .response-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .response-header i {
+            color: var(--blue);
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .response-header h5 {
+            color: var(--primary);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .response-content {
+            color: var(--primary);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading i {
+            color: var(--blue);
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.05;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+        <div class="shape">
+            <i class="fas fa-robot" style="font-size: 3rem; color: var(--blue);"></i>
+        </div>
+        <div class="shape">
+            <i class="fas fa-brain" style="font-size: 2.5rem; color: #666666;"></i>
+        </div>
+        <div class="shape">
+            <i class="fas fa-lightbulb" style="font-size: 2rem; color: var(--blue);"></i>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="main-container">
+            <div class="header">
+                <h1><i class="fas fa-robot me-3"></i>Ask Gemini AI</h1>
+                <p class="subtitle">Powered by AI Intelligence</p>
+            </div>
+
+            <div class="input-section">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <textarea class="form-control" id="userPrompt" rows="4"
+                            placeholder="Ask Gemini AI anything... What would you like to know?"
+                            name="query"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary" id="sendBtn" type="submit">
+                            <i class="fas fa-paper-plane me-2"></i>Send Question
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="responseContainer">
+
+                {% if response %}
+
+                <div class="mt-6 bg-gray-700 p-4 rounded-lg border border-gray-600">
+                    <h2 class="text-lg font-semibold text-indigo-300 mb-2">Gemini says:</h2>
+                    <p class="whitespace-pre-line text-gray-100">{{ response }}</p>
+                </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
