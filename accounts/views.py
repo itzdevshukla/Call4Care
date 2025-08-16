@@ -58,7 +58,7 @@ def u_logout(request):
 
 
 
-
+@login_required
 def ambulance(request):
         if request.method == "POST":  
             User_Ambulance_ID = request.POST.get("AmbulanceId")
@@ -83,6 +83,7 @@ def ambulance(request):
         return render(request,"accounts/ambulance_registration.html")
 
 
+@login_required
 def hospital(request):
      return render(request,"accounts/hospital_registration.html")
 
@@ -115,6 +116,7 @@ def ambulance_read(request):
 
 
 # =========Delete User/Ambulance Details=================
+@login_required
 def delete_user(request,user_id):
     User = Student.objects.get(id=user_id)
     User.delete()
@@ -122,6 +124,8 @@ def delete_user(request,user_id):
     return redirect("read")
 
 
+
+@login_required
 def delete_ambulance(request,ambulance_id):
     Ambu = Ambulance.objects.get(id=ambulance_id)
     Ambu.delete()
@@ -132,6 +136,8 @@ def delete_ambulance(request,ambulance_id):
 
 # ======================Edit Details=====================
 
+
+@login_required
 def edit_user(request,user_id):
     user = Student.objects.get(id=user_id)
     if request.method == "POST":
@@ -150,6 +156,7 @@ def edit_user(request,user_id):
     return render(request,"Edit_page/UserEdit.html",parameters)
 
 
+@login_required
 def edit_ambulance(request,ambulance_id):
     Ambu = Ambulance.objects.get(id = ambulance_id)
     if request.method == "POST":

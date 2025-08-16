@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from home.models import Student
+from home.models import Student,Ambulance
 import requests
 
 api_key = "AIzaSyB8tg_h-W4i8xOycDuqR6jzSCBomWwKj6g"
@@ -17,7 +17,25 @@ def dashboard(request):
 
 @login_required
 def administration_view(request):
-    return render(request,"dashboard/admin.html")
+    Users = Student.objects.all()
+    Ambulances = Ambulance.objects.all()
+    parameters = {
+        "Users" : Users,
+        "Ambulances":Ambulances
+    }
+    return render(request,"admin/admin.html",parameters)
+
+
+
+def profile(request):
+    return render(request,"admin/profile.html")
+
+
+
+
+
+
+
 
 @login_required
 def ask_ai(request):

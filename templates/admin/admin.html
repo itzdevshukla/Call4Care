@@ -1,0 +1,665 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Dashboard - Admin Panel{% endblock %}
+
+{% block css %}
+<style>
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border-radius: 50%;
+        transform: translate(30px, -30px);
+    }
+    
+    .stat-card.users {
+        border-left-color: #28a745;
+    }
+    
+    .stat-card.ambulances {
+        border-left-color: #dc3545;
+    }
+    
+    .stat-card.calls {
+        border-left-color: #ffc107;
+    }
+    
+    .stat-card.success {
+        border-left-color: #17a2b8;
+    }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+    
+    .stat-title {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+    
+    .stat-icon.users {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    .stat-icon.ambulances {
+        background: linear-gradient(135deg, #dc3545, #fd7e14);
+    }
+    
+    .stat-icon.calls {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+    }
+    
+    .stat-icon.success {
+        background: linear-gradient(135deg, #17a2b8, #6f42c1);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .stat-change {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .stat-change.positive {
+        color: #28a745;
+    }
+    
+    .stat-change.negative {
+        color: #dc3545;
+    }
+    
+    .charts-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .chart-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .chart-period {
+        color: #666;
+        font-size: 0.9rem;
+        background: #f8f9fa;
+        padding: 8px 15px;
+        border-radius: 20px;
+    }
+    
+    .chart-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 1.1rem;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .activity-feed {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 20px 0;
+        border-bottom: 1px solid #f8f9fa;
+        position: relative;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+        color: white;
+        font-size: 0.9rem;
+    }
+    
+    .activity-icon.user {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    .activity-icon.ambulance {
+        background: linear-gradient(135deg, #dc3545, #fd7e14);
+    }
+    
+    .activity-icon.call {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+    }
+    
+    .activity-icon.system {
+        background: linear-gradient(135deg, #6c757d, #495057);
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-text {
+        color: #333;
+        margin-bottom: 5px;
+        line-height: 1.5;
+    }
+    
+    .activity-time {
+        color: #666;
+        font-size: 0.85rem;
+    }
+    
+    .tables-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .table-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .table-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .view-all-link {
+        color: #667eea;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .view-all-link:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th {
+        background: #f8f9fa;
+        color: #666;
+        font-weight: 600;
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 2px solid #dee2e6;
+        font-size: 0.9rem;
+    }
+    
+    .data-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f8f9fa;
+        color: #333;
+    }
+    
+    .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .status-active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-completed {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .action-button {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .action-button:hover {
+        background: white;
+        border-color: #667eea;
+        color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    }
+    
+    .action-button i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .charts-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .tables-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <span class="navbar-brand">Dashboard</span>
+            
+            <div class="dropdown">
+                <a class="user-dropdown dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>Admin User</span>
+                    <i class="fas fa-chevron-down ms-2"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{% url 'profile' %}">
+                            <i class="fas fa-user-circle"></i>
+                            My Profile
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Content Area -->
+    <div class="content-area">
+        <div class="dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Welcome back, Admin!</h1>
+                <p class="dashboard-subtitle">Here's what's happening with Call4Care today.</p>
+            </div>
+            
+            <!-- Statistics Row -->
+            <div class="stats-row">
+                <div class="stat-card users">
+                    <div class="stat-header">
+                        <div>
+                            <h3 class="stat-title">Total Users</h3>
+                        </div>
+                        <div class="stat-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +12% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card ambulances">
+                    <div class="stat-header">
+                        <div>
+                            <h3 class="stat-title">Ambulances</h3>
+                        </div>
+                        <div class="stat-icon ambulances">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">89</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +5% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card calls">
+                    <div class="stat-header">
+                        <div>
+                            <h3 class="stat-title">Emergency Calls</h3>
+                        </div>
+                        <div class="stat-icon calls">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">456</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i> -3% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <div>
+                            <h3 class="stat-title">Success Rate</h3>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number">98.5%</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +2.1% from last month
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2 class="chart-title">Quick Actions</h2>
+                <div class="quick-actions-grid">
+                    <a href="{% url 'read' %}" class="action-button">
+                        <i class="fas fa-user-plus"></i>
+                        Add New User
+                    </a>
+                    <a href="{% url 'ambulance_read' %}" class="action-button">
+                        <i class="fas fa-ambulance"></i>
+                        Register Ambulance
+                    </a>
+                    <a href="#" class="action-button">
+                        <i class="fas fa-chart-bar"></i>
+                        View Reports
+                    </a>
+                    <a href="#" class="action-button">
+                        <i class="fas fa-cog"></i>
+                        System Settings
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Emergency Calls Trend</h2>
+                        <span class="chart-period">Last 7 days</span>
+                    </div>
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Chart will be displayed here
+                    </div>
+                </div>
+                
+                <div class="activity-feed">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Recent Activity</h2>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon user">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">New user <strong>John Doe</strong> registered</div>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon call">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">Emergency call completed successfully</div>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon ambulance">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">Ambulance <strong>AMB-001</strong> went online</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon system">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">System maintenance completed</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon user">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">5 new user registrations</div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tables Row -->
+            <div class="tables-row">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2 class="table-title">Recent Users</h2>
+                        <a href="{% url 'read' %}" class="view-all-link">View All</a>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Doe</td>
+                                <td>john@example.com</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Jane Smith</td>
+                                <td>jane@example.com</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mike Johnson</td>
+                                <td>mike@example.com</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>Sarah Wilson</td>
+                                <td>sarah@example.com</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2 class="table-title">Recent Emergency Calls</h2>
+                        <a href="#" class="view-all-link">View All</a>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Call ID</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#EC001</td>
+                                <td>Downtown</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>#EC002</td>
+                                <td>Mall Road</td>
+                                <td><span class="status-badge status-active">In Progress</span></td>
+                            </tr>
+                            <tr>
+                                <td>#EC003</td>
+                                <td>Hospital Area</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>#EC004</td>
+                                <td>City Center</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
